@@ -174,17 +174,15 @@ models = {
     "Logistica": LogisticRegression(penalty=None, solver='lbfgs'),
     "Lasso": LogisticRegression(penalty='l1', solver='liblinear', C=1.0),
     "Ridge": LogisticRegression(penalty='l2', solver='lbfgs', C=1.0),
-    "ElasticNet": LogisticRegression(penalty='elasticnet', solver='saga', l1_ratio=0.5, C=1.0),
+    "ElasticNet": LogisticRegression(penalty='elasticnet', solver='saga', 
+                                     l1_ratio=0.5, C=1.0),
     #"SVM": SVC(probability=True, random_state=42),
     "Naive Bayes": GaussianNB()
 }
 
-
-
 # Suponiendo que ya tienes los conjuntos X_train, y_train, X_test, y_test
 
 # Lista para almacenar los Gini scores
-
 
 gini_scores = []
 
@@ -244,6 +242,33 @@ plt.show()
 
 import shap
 import numpy as np
+
+
+
+# Inicializamos el explainer de SHAP para el modelo XGBoost
+explainer = shap.Explainer(best_model, X_train)
+
+# Seleccionamos el primer elemento del conjunto de test
+X_test_single = X_test.iloc[[0]]
+
+# Calculamos los valores SHAP para ese ejemplo
+shap_values = explainer(X_test_single)
+
+# Visualizamos el resumen de SHAP para el primer ejemplo
+shap.initjs()
+shap.plots.waterfall(shap_values[0])
+
+
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+# Obtener el modelo de Decision Tree
+decision_tree_model = models["Decision Tree"]
+
+# Dibujar el árbol de decisión
+plt.figure(figsize=(20, 10))
+plot_tree(decision_tree_model, filled=True, feature_names=X_train.columns, class_names=['Clase 0', 'Clase 1'], rounded=True)
+plt.show()
 
 
 
